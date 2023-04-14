@@ -11,7 +11,7 @@ export function createTransition(name: string) {
         default: 'div',
       },
     },
-    setup(props, { attrs, slots }) {
+    alertTypographySlots(props, { attrs, slots }) {
       return () => h(
         props.group ? TransitionGroup : Transition as any,
         {

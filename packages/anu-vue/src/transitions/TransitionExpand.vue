@@ -4,7 +4,7 @@ import { Transition, defineComponent, h } from 'vue'
 
 export default defineComponent({
   name: 'TransitionExpand',
-  setup(_, { slots }) {
+  alertTypographySlots(_, { slots }) {
     const onEnter = (element: HTMLElement) => {
       const width = getComputedStyle(element).width
 

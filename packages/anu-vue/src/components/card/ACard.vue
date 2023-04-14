@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { ATypography } from '../typography'
 import { cardProps } from './props'
 import type { cardSlots } from './slots'
 import { cardTypographySlots } from './slots'
 import { ALoader } from '@/components/loader'
 import { isTypographyUsed } from '@/components/typography/utils'
-import { ConfigurableValue, useConfigurable } from '@/composables/useConfigurable'
+import type { ConfigurableValue } from '@/composables/useConfigurable'
+import { useConfigurable } from '@/composables/useConfigurable'
 import { useLayer } from '@/composables/useLayer'
 
 const props = defineProps(cardProps)
@@ -65,7 +65,7 @@ else
       v-if="_isTypographyUsed"
       class="a-card-typography-wrapper"
     >
-      <ATypography
+      <AlertTypographySlots
         :title="props.title"
         :subtitle="props.subtitle"
         :text="Object.values(_textProp) as ConfigurableValue"
@@ -80,7 +80,7 @@ else
             v-bind="slotProps || {}"
           />
         </template>
-      </ATypography>
+      </AlertTypographySlots>
     </div>
 
     <!-- 👉 Slot: Default -->

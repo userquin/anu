@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import type { ExtractPropTypes } from 'vue'
-import { AIcon } from '@/components'
+import { typographyProps } from '@/components/typography/props'
+import { typographySlots } from '@/components/typography/slots'
 import { useLayer, useProps as useLayerProps } from '@/composables/useLayer'
 import { configurable as configurableProp } from '@/composables/useProps'
 
 const props = defineProps({
+  ...typographyProps,
 
   ...useLayerProps({
     color: {
@@ -56,13 +58,22 @@ defineOptions({
   name: 'AAlert',
 })
 
-defineSlots<{
+// TODO: Move to slots file
+const { default: _, ...alertTypographySlots } = typographySlots
+const slots = {
+  ...alertTypographySlots,
 
   /**
    * Default slot for rendering alert content
    */
-  default: {}
-}>()
+  default: {},
+
+  /**
+   * Slot for appending custom content. Will override the close icon if `dismissible` is set to `true`.
+   */
+  append: {},
+}
+defineSlots<typeof slots>()
 
 const isAlertVisible = useVModel(props, 'modelValue', emit, { defaultValue: true, passive: true })
 
@@ -94,6 +105,8 @@ const appendIconBindings = computed(() => {
     class: appendIcon,
   }
 })
+
+const _typographyProps = reactivePick(props, Object.keys(typographyProps) as Array<keyof typeof typographyProps>)
 </script>
 
 <template>
@@ -114,12 +127,25 @@ const appendIconBindings = computed(() => {
       class="flex-grow"
       data-no-reference
     >
-      <slot />
+      <slot>
+        <ATypography v-bind="_typographyProps">
+          <!-- ℹ️ Recursively pass down slots to child -->
+          <template
+            v-for="name in Object.keys(alertTypographySlots)"
+            #[name]="slotProps"
+          >
+            <slot
+              :name="name"
+              v-bind="slotProps || {}"
+            />
+          </template>
+        </ATypography>
+      </slot>
     </div>
     <div>
       <slot name="append">
         <Component
-          :is="props.dismissible ? AIcon : 'i'"
+          :is="props.dismissible ? alertTypographySlots : 'i'"
           v-if="appendIcon"
           class="align-text-top"
           v-bind="appendIconBindings"
